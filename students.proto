@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package students;
+
+service Course {
+
+    rpc Name (StudentID) returns (StudentFullName);
+
+    rpc Grades (GradesQuery) returns (AverageGrade);
+
+    rpc Group (StudentID) returns (StudentGroup);
+}
+
+message StudentID {
+    int32 id = 1;
+}
+
+message StudentFullName {
+    string name = 1;
+}
+
+message GradesQuery {
+    string name = 1;
+    int32 id = 2;
+}
+
+message AverageGrade {
+    double average = 1;
+}
+
+message StudentGroup {
+    string groupName = 1;
+}
