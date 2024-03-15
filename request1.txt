@@ -1,0 +1,15 @@
+nombre 444
+nombre 222
+nombre 456
+nombre 2
+nombre 870
+notas 123
+notas Blanco, Alexandra
+notas 997
+notas Castro, Gladys
+notas 665
+grupo 241
+grupo 995
+grupo 126
+grupo 400
+grupo 123

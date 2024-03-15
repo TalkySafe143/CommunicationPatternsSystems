@@ -12,29 +12,27 @@ var packageDefinition = protoLoader.loadSync(
     });
 var hello_proto = grpc.loadPackageDefinition(packageDefinition).helloworld;
 
-
 function Name(call, callback) {
   callback(null, {name: 'maria'});
+  console.log('Nombre: ', call.request.id);
 }
 
 function Grades(call, callback){
   callback(null, {average: 1.2});
+  console.log('Notas: ', call.request.name);
 }
 
 function Group(call, callback){
   callback(null, {groupName: 'los vagos'});
+  console.log('Grupo: ', call.request.id);
 }
-
 
 var serviceHandlers = {
   Name: Name, 
   Grades: Grades,
   Group: Group
 };
-/**
- * Starts an RPC server that receives requests for the Greeter service at the
- * sample server port
- */
+
 function main() {
   var server = new grpc.Server();
   server.addService(hello_proto.Course.service, serviceHandlers);
