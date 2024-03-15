@@ -17,23 +17,30 @@ var hello_proto = grpc.loadPackageDefinition(packageDefinition).helloworld;
 function main() {
   var target = 'localhost:50051';
 
-  var client = new hello_proto.Greeter(target, grpc.credentials.createInsecure());
-  var user = 'esto es lo que se envía al servidor :)';
+  var client = new hello_proto.Course(target, grpc.credentials.createInsecure());
 
-  client.sayHello({ name: user }, function (err, response) {
+  client.Name({ id: 2 }, function (err, response) {
     if (err) {
-      console.error('Error al llamar a sayHello:', err);
+      console.error('Error al llamar a Name:', err);
       return;
     }
-    console.log(response.message);
+    console.log(response.name);
   });
 
-  client.testOne({ id: 2 }, function (err, response) {
+  client.Grades({ name: 'pepito' }, function (err, response) {
     if (err) {
-      console.error('Error al llamar a testOne:', err);
+      console.error('Error al llamar a Grades:', err);
       return;
     }
-    console.log(response.repl);
+    console.log(response.average);
+  });
+
+  client.Group({ id: 2 }, function (err, response) {
+    if (err) {
+      console.error('Error al llamar a Group:', err);
+      return;
+    }
+    console.log(response.groupName);
   });
 
 }

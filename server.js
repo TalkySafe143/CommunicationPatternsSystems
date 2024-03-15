@@ -13,18 +13,23 @@ var packageDefinition = protoLoader.loadSync(
 var hello_proto = grpc.loadPackageDefinition(packageDefinition).helloworld;
 
 
-function sayHello(call, callback) {
-  callback(null, {message: 'Hello ' + call.request.name});
+function Name(call, callback) {
+  callback(null, {name: 'maria'});
 }
 
-function testOne(call, callback){
-  callback(null, {repl: 12+ call.request.id});
+function Grades(call, callback){
+  callback(null, {average: 1.2});
+}
+
+function Group(call, callback){
+  callback(null, {groupName: 'los vagos'});
 }
 
 
 var serviceHandlers = {
-  sayHello: sayHello, 
-  testOne: testOne,
+  Name: Name, 
+  Grades: Grades,
+  Group: Group
 };
 /**
  * Starts an RPC server that receives requests for the Greeter service at the
@@ -32,7 +37,7 @@ var serviceHandlers = {
  */
 function main() {
   var server = new grpc.Server();
-  server.addService(hello_proto.Greeter.service, serviceHandlers);
+  server.addService(hello_proto.Course.service, serviceHandlers);
   server.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), (err, port) => {
     if (err != null) {
       return console.error(err);
