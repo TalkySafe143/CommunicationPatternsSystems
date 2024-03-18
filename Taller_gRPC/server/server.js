@@ -2,6 +2,10 @@ const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const fs = require('fs');
 
+/**
+ * Antes de cargar la defincion, hay que especificar ciertas configuraciones del archivo
+ * @type {PackageDefinition}
+ */
 const packageDefinition = protoLoader.loadSync('./proto/student.proto', {
   keepCase: true,
   longs: String,
@@ -10,11 +14,30 @@ const packageDefinition = protoLoader.loadSync('./proto/student.proto', {
   oneofs: true,
 });
 
+/**
+ * Se debe cargar la definicion del .proto para poder especificar la implementacion
+ * @type {GrpcObject | ServiceClientConstructor | ProtobufTypeDefinition}
+ */
 const studentProto = grpc.loadPackageDefinition(packageDefinition).StudentService;
 
+/**
+ * Esta clase va a tener como objetivo guardar los datos de los estudiantes y exponer las operaciones necesarias
+ */
 class Course {
 
+  /**
+   * Va a ser un array de objetos con el siguiente schema:
+   *             group: Grupo al que pertenece,
+   *             id: Id del estudiante,
+   *             firstName: Primer nombre del estudiante,
+   *             secondName: Segundo nombre del estudiante,
+   *             grades: array de enteros indicando las notas del estudiante
+   */
   studentsData;
+
+  /**
+   * En el constructor se inicializa los datos con el archivo
+   */
   constructor() {
     this.studentsData = fs
         .readFileSync('./data/students.txt', 'utf-8')
@@ -30,12 +53,29 @@ class Course {
           }
         });
   }
+
+  /**
+   * Este metodo tiene como objetivo buscar un estudiante por ID y retornarlo
+   * @param id Id del estudiante
+   * @returns {*} Undefined si no existe un estudiante con dicho ID, de lo contrario, retorna el objeto con el estudiante
+   */
   searchStudentById = (id) => this.studentsData.find(student => student.id === id)
+
+  /**
+   * Este metodo tiene como objetivo buscar un estudiante por nombre y retornarlo
+   * @param name Id del estudiante
+   * @returns {*} Undefined si no existe un estudiante con dicho nombre, de lo contrario, retorna el objeto con el estudiante
+   */
   searchStudentByName = (name) => this.studentsData.find(student => student.firstName === name || student.secondName === name)
 }
 
 const course = new Course();
 
+/**
+ * Implementacion del metodo remoto getFullName especificado en el .proto
+ * @param call informacion de la llamada
+ * @param callback callback del cliente, en el primer parametro se envía un error en caso de existir
+ */
 function getFullName(call, callback) {
   console.log(`¡Se recibió un mensaje de consulta 'nombre' desde ${call.getPeer()}!\n`)
   const studentID = call.request.id;
@@ -47,6 +87,12 @@ function getFullName(call, callback) {
   }
 }
 
+
+/**
+ * Implementacion del metodo remoto getAverageGrades especificado en el .proto
+ * @param call informacion de la llamada
+ * @param callback callback del cliente, en el primer parametro se envía un error en caso de existir
+ */
 function getAverageGrades(call, callback) {
   console.log(`¡Se recibió un mensaje de consulta 'notas' desde ${call.getPeer()}!\n`)
   const studentInfo = call.request;
@@ -62,6 +108,11 @@ function getAverageGrades(call, callback) {
   }
 }
 
+/**
+ * Implementacion del metodo remoto getGroup especificado en el .proto
+ * @param call informacion de la llamada
+ * @param callback callback del cliente, en el primer parametro se envía un error en caso de existir
+ */
 function getGroup(call, callback) {
   console.log(`¡Se recibió un mensaje de consulta 'grupo' desde ${call.getPeer()}!\n`)
   const studentID = call.request.id;
@@ -73,7 +124,11 @@ function getGroup(call, callback) {
   }
 }
 
-function main() {
+/**
+ * Funcion principal para inicializar el servidor e indicar sus implementaciones
+ * Para simplicidad de la sintaxis, esta funcion es una IIFE, leer: https://developer.mozilla.org/es/docs/Glossary/IIFE
+ */
+(function() {
   const server = new grpc.Server();
   server.addService(studentProto.service, {
     getFullName: getFullName,
@@ -84,9 +139,7 @@ function main() {
     if (err) {
       console.error('Error starting server:', err);
     } else {
-      console.log('Server running at http://0.0.0.0:50051');
+      console.log('Server running at http://0.0.0.0:50051 in port ' + port);
     }
   });
-}
-
-main();
+})();
