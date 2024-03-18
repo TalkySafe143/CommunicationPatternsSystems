@@ -1,0 +1,27 @@
+{
+  "name": "grpc",
+  "version": "1.0.0",
+  "description": "gRPC is a high performance, open-source universal RPC framework",
+  "main": "client.js",
+  "scripts": {
+    "test": "{"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valentinaG08/Taller-gRPC.git"
+  },
+  "keywords": [
+    "\"gRPC\"",
+    "\"Comunicacion\""
+  ],
+  "author": "Valentina García Alfonso",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valentinaG08/Taller-gRPC/issues"
+  },
+  "homepage": "https://github.com/valentinaG08/Taller-gRPC#readme",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.10.3",
+    "minimist": "^1.2.8"
+  }
+}

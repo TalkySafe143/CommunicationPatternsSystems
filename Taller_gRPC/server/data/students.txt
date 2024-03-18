@@ -1,0 +1,10 @@
+G3 334 Aguilar, Maria 3 5
+G5 444 Rodriguez, Jose 4 3
+G6 111 Blanco, Alexandra 3 4
+G3 222 Martinez, Juan 4 3
+G5 555 Lopez, Carlos 5 4
+G6 666 Perez, Laura 3 5
+G3 777 Fernandez, Sofia 4 5
+G5 888 Gomez, David 5 5
+G6 999 Ramirez, Andrea 4 4
+G3 123 Gonzalez, Luis 3 3

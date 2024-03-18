@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+service StudentService {
+  rpc getFullName(StudentID) returns (FullName);
+  rpc getAverageGrades(StudentID) returns (AverageGrades);
+  rpc getGroup(StudentID) returns (Group);
+}
+
+message StudentID {
+  string id = 1;
+}
+
+message FullName {
+  string name = 1;
+}
+
+message AverageGrades {
+  float average = 1;
+}
+
+message Group {
+  string group = 1;
+}

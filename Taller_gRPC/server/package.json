@@ -1,0 +1,28 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Servidor",
+  "main": "server.js",
+  "scripts": {
+    "test": "\"No hay pruebas disponibles para este proyecto en este momento\\\"",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valentinaG08/Taller-gRPC.git"
+  },
+  "keywords": [
+    "\"gRPC\"",
+    "\"Comunicacion\""
+  ],
+  "author": "Valentina García Alfonso",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valentinaG08/Taller-gRPC/issues"
+  },
+  "homepage": "https://github.com/valentinaG08/Taller-gRPC#readme",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.10.3",
+    "@mapbox/node-pre-gyp": "^1.0.11"
+  }
+}
