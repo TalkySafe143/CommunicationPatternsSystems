@@ -2,7 +2,7 @@ const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const fs = require('fs');
 
-const packageDefinition = protoLoader.loadSync('proto/student.proto', {
+const packageDefinition = protoLoader.loadSync('./proto/student.proto', {
   keepCase: true,
   longs: String,
   enums: String,
@@ -12,40 +12,50 @@ const packageDefinition = protoLoader.loadSync('proto/student.proto', {
 
 const studentProto = grpc.loadPackageDefinition(packageDefinition).StudentService;
 
-const studentsData = fs.readFileSync('data/students.txt', 'utf-8').split('\n');
+class Course {
+
+  studentsData;
+  constructor() {
+    this.studentsData = fs
+        .readFileSync('./data/students.txt', 'utf-8')
+        .split('\n')
+        .map(student => {
+          const infoStudent = student.split(" ")
+          return {
+            group: infoStudent[0],
+            id: infoStudent[1],
+            firstName: infoStudent[2].substring(0, infoStudent[2].length-1),
+            secondName: infoStudent[3],
+            grades: [parseInt(infoStudent[4]), parseInt(infoStudent[5])]
+          }
+        });
+  }
+  searchStudentById = (id) => this.studentsData.find(student => student.id === id)
+  searchStudentByName = (name) => this.studentsData.find(student => student.firstName === name || student.secondName === name)
+}
+
+const course = new Course();
 
 function getFullName(call, callback) {
+  console.log(`¡Se recibió un mensaje de consulta 'nombre' desde ${call.getPeer()}!\n`)
   const studentID = call.request.id;
-  const student = studentsData.find(student => student.includes(studentID));
+  const student = course.searchStudentById(studentID)
   if (student) {
-    const fullName = student.split(' ').slice(2, -2).join(' ');
-    callback(null, { name: fullName });
+    callback(null, { name: student.secondName + " " + student.firstName });
   } else {
     callback(new Error('No se encontró el estudiante.'));
   }
 }
 
-function isNumeric(value) {
-  return /^-?\d+$/.test(value);
-}
 function getAverageGrades(call, callback) {
-  const studentInfo = String(call.request.idOrName);
-  
+  console.log(`¡Se recibió un mensaje de consulta 'notas' desde ${call.getPeer()}!\n`)
+  const studentInfo = call.request;
   let student;
-  if (!isNaN(studentInfo)) {
-    const studentID = parseInt(studentInfo);
-    student = studentsData.find(student => student.split(' ')[1] === studentID);
-  } else {
-    student = studentsData.find(student => {
-      const studentData = student.split(' ');
-      const fullName = studentData.slice(2, -2).join(' ');
-      return fullName && fullName.toLowerCase().includes(studentInfo.toLowerCase());
-    });
-  }
 
+  if (studentInfo.id !== "") student = course.searchStudentById(studentInfo.id)
+  else student = course.searchStudentByName(studentInfo.name)
   if (student) {
-    const grades = student.split(' ').slice(-2).map(Number);
-    const average = grades.reduce((acc, curr) => acc + curr, 0) / grades.length;
+    const average = student.grades.reduce((prev, curr) => prev+curr) / student.grades.length;
     callback(null, { average });
   } else {
     callback(new Error('No se encontró el estudiante.'));
@@ -53,11 +63,11 @@ function getAverageGrades(call, callback) {
 }
 
 function getGroup(call, callback) {
+  console.log(`¡Se recibió un mensaje de consulta 'grupo' desde ${call.getPeer()}!\n`)
   const studentID = call.request.id;
-  const student = studentsData.find(student => student.includes(studentID));
+  const student = course.searchStudentById(studentID);
   if (student) {
-    const group = student.split(' ')[0];
-    callback(null, { group });
+    callback(null, { group: student.group });
   } else {
     callback(new Error('No se encontró el estudiante.'));
   }

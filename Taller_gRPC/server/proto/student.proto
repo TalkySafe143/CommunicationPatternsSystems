@@ -2,12 +2,17 @@ syntax = "proto3";
 
 service StudentService {
   rpc getFullName(StudentID) returns (FullName);
-  rpc getAverageGrades(StudentID) returns (AverageGrades);
+  rpc getAverageGrades(GradesQuery) returns (AverageGrades);
   rpc getGroup(StudentID) returns (Group);
 }
 
 message StudentID {
   string id = 1;
+}
+
+message GradesQuery {
+  string name = 1;
+  string id = 2;
 }
 
 message FullName {

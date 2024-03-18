@@ -3,7 +3,7 @@ const protoLoader = require('@grpc/proto-loader');
 const fs = require('fs');
 
 // Cargar el archivo de definición del protocolo gRPC
-const packageDefinition = protoLoader.loadSync('proto/student.proto', {
+const packageDefinition = protoLoader.loadSync('./proto/student.proto', {
   keepCase: true,
   longs: String,
   enums: String,
@@ -22,6 +22,15 @@ function isNumeric(value) {
   return /^-?\d+$/.test(value);
 }
 
+
+function printServerAnswer(query, action, message) {
+  console.log("--------------")
+  console.log(`Respuesta del servidor para '${action}' con la siguiente consulta`)
+  console.log(query)
+  console.log(message);
+  console.log("--------------\n")
+}
+
 // Procesar cada solicitud
 solicitudes.forEach((linea) => {
   const [metodo, parametro] = linea.split(' ');
@@ -30,21 +39,29 @@ solicitudes.forEach((linea) => {
     case 'nombre':
       client.getFullName({ id: parseInt(parametro) }, (error, response) => {
         if (error) {
-          console.error('Error:', error.message);
+          console.error('Error recuperando los nombres:', error.message);
         } else {
-          console.log('Nombre:', response.name);
+          printServerAnswer(
+              { id: parseInt(parametro) },
+              lMetodo,
+              'Nombre: '+ response.name
+          );
         }
       });
       break;
       case 'notas':
-        const cParametro = parametro.trim();
-        const isId = isNumeric(cParametro);
-        const idOrName = isId ? { id: parseInt(cParametro) } : { name: cParametro };
-        client.getAverageGrades(idOrName, (error, response) => {
+        let query;
+        if (isNumeric(parametro)) query = {id: parametro, name: ""}
+        else query = {id: "", name: parametro}
+        client.getAverageGrades(query, (error, response) => {
           if (error) {
-            console.error('Error:', error.message);
+            console.error('Error recuperando las notas:', error.message);
           } else {
-            console.log('Promedio de notas:', response.average);
+            printServerAnswer(
+                query,
+                lMetodo,
+                'Promedio de notas: ' + response.average
+            );
           } 
         });
       break;
@@ -52,9 +69,13 @@ solicitudes.forEach((linea) => {
     case 'grupo':
       client.getGroup({ id: parseInt(parametro) }, (error, response) => {
         if (error) {
-          console.error('Error:', error.message);
+          console.error('Error recuperando el grupo:', error.message);
         } else {
-          console.log('Grupo:', response.group);
+          printServerAnswer(
+              { id: parseInt(parametro) },
+              lMetodo,
+              'Grupo: ' + response.group
+          )
         }
       });
       break;
