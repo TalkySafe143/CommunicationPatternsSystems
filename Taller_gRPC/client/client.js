@@ -120,7 +120,7 @@ solicitudes.forEach((linea) => {
           )
         }
       });
-      
+
       break;
     default:
       console.error('Solicitud no reconocida:', metodo);
